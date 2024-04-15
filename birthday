@@ -1,0 +1,48 @@
+import datetime
+
+# Dictionary to store birthdays
+birthdays = {}
+
+
+def add_birthday(name, date):
+  birthdays[name] = date
+
+
+def check_birthdays():
+  today = datetime.date.today()
+  for name, date in birthdays.items():
+    if date.month == today.month and date.day == today.day:
+      print(f"Happy Birthday, {name}!")
+
+
+def main():
+  print("Welcome to the Birthday Reminder!")
+
+  while True:
+    print("\nMenu:")
+    print("1. Add a birthday")
+    print("2. Check today's birthdays")
+    print("3. Exit")
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+      name = input("Enter the name: ")
+      dob = input("Enter the date of birth (YYYY-MM-DD): ")
+      year, month, day = map(int, dob.split('-'))
+      add_birthday(name, datetime.date(year, month, day))
+      print("Birthday added successfully!")
+
+    elif choice == '2':
+      print("\nToday's Birthdays:")
+      check_birthdays()
+
+    elif choice == '3':
+      print("Exiting the Birthday Reminder. Goodbye!")
+      break
+
+    else:
+      print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+  main()
