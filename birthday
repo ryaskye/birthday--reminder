@@ -1,48 +1,78 @@
 import datetime
+import calendar
 
 # Dictionary to store birthdays
 birthdays = {}
 
 
 def add_birthday(name, date):
-  birthdays[name] = date
+    birthdays[name] = date
 
 
 def check_birthdays():
-  today = datetime.date.today()
-  for name, date in birthdays.items():
-    if date.month == today.month and date.day == today.day:
-      print(f"Happy Birthday, {name}!")
+    today = datetime.date.today()
+    for name, date in birthdays.items():
+        if date.month == today.month and date.day == today.day:
+            print(f"Happy Birthday, {name}!")
+
+
+def display_calendar():
+    today = datetime.date.today()
+    year = today.year
+    month = today.month
+    cal = calendar.monthcalendar(year, month)
+    print("\nCalendar for the Current Month:")
+    print(" Sun Mon Tue Wed Thu Fri Sat")
+    for week in cal:
+        for day in week:
+            if day == 0:
+                print("    ", end=" ")  # Placeholder for days outside the current month
+            elif day == today.day:
+                print(f"[\033[1;32;40m{day:2d}\033[m]", end=" ")  # Highlight today's date in green
+            else:
+                if any(date.day == day for date in birthdays.values() if date.month == month):
+                    print(f"\033[1;33;40m{day:2d}\033[m", end=" ")  # Highlight days with birthdays in yellow
+                else:
+                    print(f"{day:2d}", end=" ")  # Display days from the current month
+        print()
+    print("\nBirthdays for the Current Month:")
+    for name, date in birthdays.items():
+        if date.month == month:
+            print(f"{date.day}: {name}")
 
 
 def main():
-  print("Welcome to the Birthday Reminder!")
+    print("Welcome to the Birthday Reminder!")
 
-  while True:
-    print("\nMenu:")
-    print("1. Add a birthday")
-    print("2. Check today's birthdays")
-    print("3. Exit")
-    choice = input("Enter your choice: ")
+    while True:
+        print("\nMenu:")
+        print("1. Add a birthday")
+        print("2. Check today's birthdays")
+        print("3. Display calendar for the current month")
+        print("4. Exit")
+        choice = input("Enter your choice: ")
 
-    if choice == '1':
-      name = input("Enter the name: ")
-      dob = input("Enter the date of birth (YYYY-MM-DD): ")
-      year, month, day = map(int, dob.split('-'))
-      add_birthday(name, datetime.date(year, month, day))
-      print("Birthday added successfully!")
+        if choice == '1':
+            name = input("Enter the name: ")
+            dob = input("Enter the date of birth (YYYY-MM-DD): ")
+            year, month, day = map(int, dob.split('-'))
+            add_birthday(name, datetime.date(year, month, day))
+            print("Birthday added successfully!")
 
-    elif choice == '2':
-      print("\nToday's Birthdays:")
-      check_birthdays()
+        elif choice == '2':
+            print("\nToday's Birthdays:")
+            check_birthdays()
 
-    elif choice == '3':
-      print("Exiting the Birthday Reminder. Goodbye!")
-      break
+        elif choice == '3':
+            display_calendar()
 
-    else:
-      print("Invalid choice. Please try again.")
+        elif choice == '4':
+            print("Exiting the Birthday Reminder. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
 
 
 if __name__ == "__main__":
-  main()
+    main()
