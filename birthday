@@ -1,5 +1,6 @@
 import datetime
-import calendar
+import tkinter as tk
+from tkinter import messagebox
 
 # Dictionary to store birthdays
 birthdays = {}
@@ -11,67 +12,61 @@ def add_birthday(name, date):
 
 def check_birthdays():
     today = datetime.date.today()
-    for name, date in birthdays.items():
-        if date.month == today.month and date.day == today.day:
-            print(f"Happy Birthday, {name}!")
+    today_birthdays = [name for name, date in birthdays.items() if date.month == today.month and date.day == today.day]
+    if today_birthdays:
+        messagebox.showinfo("Today's Birthdays", "Happy Birthday to: " + ', '.join(today_birthdays))
+    else:
+        messagebox.showinfo("Today's Birthdays", "No birthdays today.")
 
 
-def display_calendar():
-    today = datetime.date.today()
-    year = today.year
-    month = today.month
-    cal = calendar.monthcalendar(year, month)
-    print("\nCalendar for the Current Month:")
-    print(" Sun Mon Tue Wed Thu Fri Sat")
-    for week in cal:
-        for day in week:
-            if day == 0:
-                print("    ", end=" ")  # Placeholder for days outside the current month
-            elif day == today.day:
-                print(f"[\033[1;32;40m{day:2d}\033[m]", end=" ")  # Highlight today's date in green
-            else:
-                if any(date.day == day for date in birthdays.values() if date.month == month):
-                    print(f"\033[1;33;40m{day:2d}\033[m", end=" ")  # Highlight days with birthdays in yellow
-                else:
-                    print(f"{day:2d}", end=" ")  # Display days from the current month
-        print()
-    print("\nBirthdays for the Current Month:")
-    for name, date in birthdays.items():
-        if date.month == month:
-            print(f"{date.day}: {name}")
+def add_birthday_window():
+    add_window = tk.Toplevel(root)
+    add_window.title("Add Birthday")
+    name_label = tk.Label(add_window, text="Name:")
+    name_label.pack()
+    name_entry = tk.Entry(add_window)
+    name_entry.pack()
+    dob_label = tk.Label(add_window, text="Date of Birth (YYYY-MM-DD):")
+    dob_label.pack()
+    dob_entry = tk.Entry(add_window)
+    dob_entry.pack()
+
+    def add():
+        name = name_entry.get()
+        dob = dob_entry.get()
+        year, month, day = map(int, dob.split('-'))
+        add_birthday(name, datetime.date(year, month, day))
+        messagebox.showinfo("Success", "Birthday added successfully!")
+        add_window.destroy()
+
+    add_button = tk.Button(add_window, text="Add", command=add)
+    add_button.pack()
 
 
 def main():
-    print("Welcome to the Birthday Reminder!")
+    global root
+    root = tk.Tk()
+    root.title("Birthday Reminder")
 
-    while True:
-        print("\nMenu:")
-        print("1. Add a birthday")
-        print("2. Check today's birthdays")
-        print("3. Display calendar for the current month")
-        print("4. Exit")
-        choice = input("Enter your choice: ")
+    print("Welcome to the Birthday Remi2nder!")
+    print("\nMenu:")
+    print("1. Add a birthday")
+    print("2. Check today's birthdays")
+    print("3. Exit")
 
-        if choice == '1':
-            name = input("Enter the name: ")
-            dob = input("Enter the date of birth (YYYY-MM-DD): ")
-            year, month, day = map(int, dob.split('-'))
-            add_birthday(name, datetime.date(year, month, day))
-            print("Birthday added successfully!")
+    menu_frame = tk.Frame(root)
+    menu_frame.pack()
 
-        elif choice == '2':
-            print("\nToday's Birthdays:")
-            check_birthdays()
+    add_button = tk.Button(menu_frame, text="Add a Birthday", command=add_birthday_window)
+    add_button.pack(side=tk.LEFT)
 
-        elif choice == '3':
-            display_calendar()
+    check_button = tk.Button(menu_frame, text="Check Today's Birthdays", command=check_birthdays)
+    check_button.pack(side=tk.LEFT)
 
-        elif choice == '4':
-            print("Exiting the Birthday Reminder. Goodbye!")
-            break
+    exit_button = tk.Button(menu_frame, text="Exit", command=root.quit)
+    exit_button.pack(side=tk.LEFT)
 
-        else:
-            print("Invalid choice. Please try again.")
+    root.mainloop()
 
 
 if __name__ == "__main__":
